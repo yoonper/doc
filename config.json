@@ -1,0 +1,47 @@
+{
+    "title": "文档模块",
+    "menu": [
+        {
+            "title": "父级菜单 1",
+            "icon": "folder",
+            "child": [
+                {
+                    "title": "子级菜单 1",
+                    "key": "doc1"
+                },
+                {
+                    "title": "子级菜单 2",
+                    "key": "doc2"
+                }
+            ]
+        },
+        {
+            "title": "父级菜单 2",
+            "icon": "heart",
+            "child": [
+                {
+                    "title": "子级菜单 3",
+                    "key": "doc3"
+                },
+                {
+                    "title": "子级菜单 4",
+                    "key": "doc4"
+                }
+            ]
+        },
+        {
+            "title": "父级菜单 3",
+            "icon": "bulb",
+            "child": [
+                {
+                    "title": "子级菜单 5",
+                    "key": "doc5"
+                },
+                {
+                    "title": "子级菜单 6",
+                    "key": "doc6"
+                }
+            ]
+        }
+    ]
+}

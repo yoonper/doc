@@ -44,7 +44,7 @@
             <!---------- 锚点区域开始 ---------->
             <a-layout-sider class="anchor">
                 <a-anchor>
-                    <a-anchor-link v-for="item in anchor" :href="item.href" :title="item.title"></a-anchor-link>
+                    <a-anchor-link v-for="item in anchor" :href="item.href" :title="item.title" :style="`margin-left:${item.level-1}em`"></a-anchor-link>
                 </a-anchor>
             </a-layout-sider>
             <!---------- 锚点区域结束 ---------->
@@ -90,7 +90,7 @@
                     window.scrollTo({left: 0, top: 0, behavior: 'smooth'})
                 });
             },
-            // 渲染链接（新增新窗口打开）
+            // 渲染链接（新窗口打开）
             rendererLink: function () {
                 return function (href, title, text) {
                     let out = `<a target="_blank" href="${href}"`;
@@ -98,11 +98,11 @@
                     return `${out}>${text}</a>`;
                 }
             },
-            // 渲染标题（新增支持锚点链接）
+            // 渲染标题（支持锚点链接）
             rendererHeading: function () {
                 let _this = this;
                 return function (text, level) {
-                    _this.anchor.push({title: text, href: `#${text}`});
+                    _this.anchor.push({title: text, href: `#${text}`, level: level});
                     return `<h${level} id="${text}">${text}</h${level}>`;
                 };
             }

@@ -18,8 +18,8 @@ h1,h2,h3,h4,h5,h6{color:rgba(0,0,0,.7);font-weight:400;}
 .content blockquote{border-left:5px solid #EEE;background:#F5F5F5;padding:15px;}
 .content blockquote p:last-child{margin-bottom:0;}
 .content code{padding:3px 5px;font-family:SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,Sans-Serif;font-size:12px;background:#F5F5F5;}
-.content pre{color:#C5C8C6;background:#222;padding:15px;}
-.content pre code{padding:0;word-break:normal;white-space:pre-wrap;word-wrap:break-word;background:#222;}
+.content pre{color:#C5C8C6;background:#1D1F21;padding:15px;}
+.content pre code{padding:0;word-break:normal;white-space:pre-wrap;word-wrap:break-word;background:#1D1F21;}
 .content ul{list-style-type:circle;}
 .content img{max-width:100%;}
 /* 滚动条样式 */

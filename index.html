@@ -5,11 +5,13 @@
     <meta charset="utf-8">
     <link rel="icon" href="data:;base64,=">
     <link href="css/antd.min.css" rel="stylesheet" type="text/css"/>
+    <link href="css/highlight-hybrid.min.css" rel="stylesheet" type="text/css"/>
     <link href="css/style.css" rel="stylesheet" type="text/css"/>
     <script src="js/vue.min.js"></script>
     <script src="js/antd.min.js"></script>
     <script src="js/axios.min.js"></script>
     <script src="js/marked.min.js"></script>
+    <script src="js/highlight.min.js"></script>
 </head>
 <body>
 <div id="app">
@@ -44,7 +46,12 @@
             <!---------- 锚点区域开始 ---------->
             <a-layout-sider class="anchor">
                 <a-anchor>
-                    <a-anchor-link v-for="item in anchor" :href="item.href" :title="item.title" :style="`margin-left:${item.level-1}em`"></a-anchor-link>
+                    <a-anchor-link
+                        v-for="item in anchor"
+                        :href="item.href"
+                        :title="item.title"
+                        :style="`margin-left:${item.level-1}em`">
+                    </a-anchor-link>
                 </a-anchor>
             </a-layout-sider>
             <!---------- 锚点区域结束 ---------->
@@ -83,6 +90,13 @@
                 let _this = this;
                 _this.anchor = [];
                 axios.get(`doc/${key}.md?t=${(new Date()).getTime()}`).then(function (rsp) {
+                    // 代码高亮
+                    marked.setOptions({
+                        highlight: function (code) {
+                            return hljs.highlightAuto(code).value;
+                        }
+                    });
+                    // 设置渲染
                     const renderer = new marked.Renderer();
                     renderer.link = _this.rendererLink();
                     renderer.heading = _this.rendererHeading();

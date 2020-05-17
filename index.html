@@ -12,12 +12,13 @@
     <script src="js/axios.min.js"></script>
     <script src="js/marked.min.js"></script>
     <script src="js/highlight.min.js"></script>
+    <script src="js/vue-dash-event.min.js"></script>
 </head>
 <body>
 <div id="app">
     <a-layout>
         <!---------- 头部区域开始 ---------->
-        <a-layout-header class="header" style="background:#FFF">
+        <a-layout-header class="header">
             <div class="logo"></div>
             <div class="title">{{title}}</div>
         </a-layout-header>
@@ -28,10 +29,16 @@
         <a-layout>
             <!---------- 导航菜单开始 ---------->
             <a-layout-sider width="300" class="sider">
-                <a-menu mode="inline" :default-open-keys="['0']" :default-selected-keys="['0-0']">
-                    <a-sub-menu v-for="(sub,m) in menu" :key="`${m.toString()}`">
+                <a-menu
+                    mode="inline"
+                    :open-keys="menu.open"
+                    :selected-keys="menu.selected"
+                    v-on:open-change="openMenu"
+                    v-on:select="selectMenu"
+                >
+                    <a-sub-menu v-for="(sub,index) in menu.data" :key="`${index.toString()}`">
                         <span slot="title"><a-icon :type="sub.icon"></a-icon>{{sub.title}}</span>
-                        <a-menu-item v-for="(item,n) in sub.child" :key="`${m}-${n}`" @click="getDoc(item.key)">
+                        <a-menu-item v-for="item in sub.child" :key="item.doc" @click="getDoc(item.doc, null, true)">
                             {{item.title}}
                         </a-menu-item>
                     </a-sub-menu>
@@ -68,40 +75,61 @@
 </div>
 
 <script>
+    Vue.use(window['vue-dash-event']);
+
     new Vue({
         el: '#app',
         data: {
             title: '',
-            menu: [],
+            menu: {
+                data: [],
+                open: [],
+                selected: [],
+            },
             anchor: [],
-            content: ''
+            content: '',
         },
         methods: {
-            init: function () {
-                let _this = this;
-                axios.get(`config.json?t=${(new Date()).getTime()}`).then(function (rsp) {
-                    document.title = _this.title = rsp.data.title; // 设置网页标题
-                    _this.menu = rsp.data.menu; // 设置导航菜单
-                    _this.getDoc(_this.menu[0].child[0].key); // 默认加载第一个文档
-                });
+            init: function (setHistory) {
+                let doc = this.getQuery('doc');
+                doc = doc ? doc : this.menu.data[0].child[0].doc;
+                this.getDoc(doc, window.location.hash, setHistory); // 读取文档
+                this.menu.selected = [doc];
             },
             // 读取文档
-            getDoc: function (key) {
+            getDoc: function (doc, hash, setHistory) {
                 let _this = this;
+                if (_this.menu.selected[0] === doc) {
+                    return;
+                }
                 _this.anchor = [];
-                axios.get(`doc/${key}.md?t=${(new Date()).getTime()}`).then(function (rsp) {
+                axios.get(`doc/${doc}.md?t=${(new Date()).getTime()}`).then(function (rsp) {
                     // 代码高亮
                     marked.setOptions({
                         highlight: function (code) {
                             return hljs.highlightAuto(code).value;
                         }
                     });
+
                     // 设置渲染
                     const renderer = new marked.Renderer();
                     renderer.link = _this.rendererLink();
                     renderer.heading = _this.rendererHeading();
                     _this.content = marked(rsp.data, {renderer: renderer});
-                    window.scrollTo({left: 0, top: 0, behavior: 'smooth'})
+
+                    // 路由跳转
+                    _this.$nextTick(() => {
+                        if (setHistory) {
+                            history.pushState({}, '', `?doc=${doc}`);
+                        }
+
+                        if (hash) {
+                            document.getElementById(decodeURI(hash).substring(1)).scrollIntoView();
+                            location.hash = hash;
+                        } else {
+                            scrollTo({top: 0, behavior: 'smooth'});
+                        }
+                    })
                 });
             },
             // 渲染链接（新窗口打开）
@@ -112,17 +140,45 @@
                     return `${out}>${text}</a>`;
                 }
             },
-            // 渲染标题（支持锚点链接）
+            // 渲染标题（加入锚点链接）
             rendererHeading: function () {
                 let _this = this;
                 return function (text, level) {
                     _this.anchor.push({title: text, href: `#${text}`, level: level});
                     return `<h${level} id="${text}">${text}</h${level}>`;
                 };
+            },
+            // 读取 GET 参数
+            getQuery: function (name) {
+                let query = window.location.search.substring(1).split('&');
+                for (let item of query) {
+                    let arr = item.split('=');
+                    if (arr[0] === name) {
+                        return arr[1];
+                    }
+                }
+            },
+            // 打开菜单
+            openMenu(keys) {
+                this.menu.open = keys;
+            },
+            // 选中菜单
+            selectMenu(item) {
+                this.menu.selected = [item.key];
             }
         },
         mounted: function () {
-            this.init();
+            var _this = this;
+            axios.get(`config.json?t=${(new Date()).getTime()}`).then(function (rsp) {
+                document.title = _this.title = rsp.data.title; // 设置网页标题
+                _this.menu.data = rsp.data.menu; // 设置导航菜单
+                _this.menu.open = Object.keys(_this.menu.data); // 展开所有一级菜单
+                _this.init(true);
+            });
+
+            onpopstate = function () {
+                _this.init(false);
+            };
         }
     });
 </script>

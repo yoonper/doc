@@ -7,11 +7,11 @@
             "child": [
                 {
                     "title": "子级菜单 1",
-                    "key": "doc1"
+                    "doc": "doc1"
                 },
                 {
                     "title": "子级菜单 2",
-                    "key": "doc2"
+                    "doc": "doc2"
                 }
             ]
         },
@@ -21,11 +21,11 @@
             "child": [
                 {
                     "title": "子级菜单 3",
-                    "key": "doc3"
+                    "doc": "doc3"
                 },
                 {
                     "title": "子级菜单 4",
-                    "key": "doc4"
+                    "doc": "doc4"
                 }
             ]
         },
@@ -35,11 +35,11 @@
             "child": [
                 {
                     "title": "子级菜单 5",
-                    "key": "doc5"
+                    "doc": "doc5"
                 },
                 {
                     "title": "子级菜单 6",
-                    "key": "doc6"
+                    "doc": "doc6"
                 }
             ]
         }

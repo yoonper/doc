@@ -1,5 +1,5 @@
 body,#app{height:100%;}
-body,.ant-layout,.anchor{background:#FFF;}
+body,.ant-layout,.anchor,.ant-layout-header{background:#FFF;}
 .divider{margin:0;}
 .logo{display:inline-block;width:57px;height:40px;background:url(../image/logo.svg);margin:0 8px -12px 0;}
 .title{display:inline-block;letter-spacing:5px;font-size:18px;margin:0 5px -8px 0;}
